@@ -2,7 +2,7 @@
 
 《RefRain - prism memories -》（RebRank 出品，Steam 上的免费纵版弹幕射击游戏）的非官方简体中文汉化补丁。
 
-汉化覆盖游戏内全部 949 行文本（943 行译文；其余 6 行原文即为空行或开发组故意保留的乱码彩蛋），并可选地汉化启动配置工具 `config.exe` 的界面。
+汉化覆盖游戏内全部 949 行文本（943 行译文；其余 6 行原文即为空行或开发组故意保留的乱码彩蛋）、教学关（TUTORIAL）的全部界面图文（对话、开始/跳过菜单、章节标题、任务目标、计量槽标签等 106 处精灵文本），并可选地汉化启动配置工具 `config.exe` 的界面。
 
 ## 下载与安装
 
@@ -36,14 +36,18 @@
 
 ## 工作原理
 
-游戏通过 `rp1` 补丁包机制（`Patch\patch_0001.rp1`，type 0x10）加载覆盖资源，官方格式本身支持替换 `localization.rsr`（TSV：`MSG编号\t日文\t英文`，游戏默认读取英文列）。汉化做了两件事：
+游戏通过 `rp1` 补丁包机制（`Patch\patch_0001.rp1`，type 0x10）加载覆盖资源，官方格式本身支持替换 `localization.rsr`（TSV：`MSG编号\t日文\t英文`，游戏默认读取英文列）。汉化做了三件事：
 
 1. **文本**：把 `localization.rsr` 的英文列替换为 GBK 编码的中文译文；
-2. **字体**：补丁包内嵌一份改名为游戏默认字体名的 [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)（OFL 1.1）子集，配合主程序那 1 字节的字符集补丁，让 GDI 用 GB2312 字符集正确渲染中文。
+2. **字体**：补丁包内嵌一份改名为游戏默认字体名的 [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)（OFL 1.1）子集，配合主程序那 1 字节的字符集补丁，让 GDI 用 GB2312 字符集正确渲染中文；
+3. **教学关图文**：教学关的界面文字预渲染在贴图 `Data/Grp/tutorial_obj_eng.png` 里（113 处文字精灵，由 `Data/Script/tutorial.rsr` 内的精灵表引用），不走 `localization.rsr`。补丁按精灵表坐标原位擦除英文、用 Noto Sans SC 重绘中文，保留原图的配色（正文白 + 关键词黄、标题金色渐变 + 下划线、菜单灰/黄两态）与装饰图形（波纹、箭头、目标标记等），再经 rp1 覆盖同名文件。
 
 `tools/` 目录是本补丁的全部构建脚本（Python 3，依赖 fontTools）：
 
 - `cn/part1.py` … `cn/part7_music.py` —— 全部译文（按文本行号分段）；
+- `tutorial/translation.py` —— 教学关 106 处精灵文本的译文与配色/样式表；
+- `tutorial/redraw.py` / `tutorial/sprites.json` —— 教学关贴图原位重绘器与精灵表
+  （自动从 `Data.ra1` 提取原图，重绘输出 `tutorial_obj_chn.png`）；
 - `buildfont.py` —— 从 Noto Sans SC 变量字体实例化 wght=500、子集化并改写字体名表；
 - `smokebuild.py` / `finalbuild.py` —— 生成 `localization.rsr` 并打包 `patch_0001.rp1`；
 - `packrp1.py` / `raf1.py` —— rp1 包打包器与格式解析/模拟器；

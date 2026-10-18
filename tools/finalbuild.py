@@ -196,9 +196,11 @@ print("special rows OK")
 
 # ---------- 打包 ----------
 font = open(os.path.join(HERE, "cnfont.ttf"), "rb").read()
+tutorial = open(os.path.join(HERE, "tutorial", "tutorial_obj_chn.png"), "rb").read()
 rp1 = build_rp1({
     "Data/Script/localization.rsr": rsr,
     "Data/Font/umeplus-cl-gothic.ttf": font,
+    "Data/Grp/tutorial_obj_eng.png": tutorial,
 })
 outdir = os.path.join(GAME, "Patch")
 os.makedirs(outdir, exist_ok=True)
@@ -212,5 +214,7 @@ e = a.entry_by_name("data/script/localization.rsr")
 assert a.read(e) == rsr
 e2 = a.entry_by_name("data/font/umeplus-cl-gothic.ttf")
 assert a.read(e2) == font
+e3 = a.entry_by_name("data/grp/tutorial_obj_eng.png")
+assert a.read(e3) == tutorial
 print("self-parse OK")
 print("DONE")

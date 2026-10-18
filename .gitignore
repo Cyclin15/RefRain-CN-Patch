@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+tools/cnfont.ttf
+tools/localization.rsr
+tools/tutorial.rsr
+tools/tutorial/tutorial_obj_eng.png
+tools/tutorial/tutorial_obj_chn.png
+tools/tutorial/preview*.png
