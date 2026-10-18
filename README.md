@@ -2,7 +2,7 @@
 
 《RefRain - prism memories -》（RebRank 出品，Steam 上的免费纵版弹幕射击游戏）的非官方简体中文汉化补丁。
 
-汉化覆盖游戏内全部 949 行文本（943 行译文；其余 6 行原文即为空行或开发组故意保留的乱码彩蛋）。
+汉化覆盖游戏内全部 949 行文本（943 行译文；其余 6 行原文即为空行或开发组故意保留的乱码彩蛋），并可选地汉化启动配置工具 `config.exe` 的界面。
 
 ## 下载与安装
 
@@ -13,22 +13,26 @@
    - 把原版 `RefRain.exe` 备份为 `RefRain.exe.bak`；
    - 修改主程序中的 1 个字节（GDI 字体字符集：日文 Shift-JIS → 简体中文 GB2312）。
 3. 启动游戏即可。
+4. （可选）双击运行 `安装config补丁.bat`，把 `config.exe` 设置界面（画面尺寸、音量、手柄、Twitter 等全部选项）也汉化为中文。这一步需要安装 [Python 3](https://www.python.org/)（安装时勾选 "Add python.exe to PATH"）；没有 Python 也不影响游戏本体汉化，只是配置工具保持原样。
 
 ### 环境要求
 
 - Steam 版《RefRain - prism memories -》V1.03.7（`RefRain.exe` 大小 1,118,160 字节）；
-- 简体中文区域设置的 Windows（系统代码页 GBK / 936）——本补丁利用 GBK 代码页直接显示中文，非中文区域设置下无法正常显示。
+- 简体中文区域设置的 Windows（系统代码页 GBK / 936）——本补丁利用 GBK 代码页直接显示中文，非中文区域设置下无法正常显示；
+- （仅 config.exe 汉化需要）Python 3。
 
 ### 卸载
 
 - 删除 `Patch\patch_0001.rp1`；
-- 把 `RefRain.exe.bak` 改名回 `RefRain.exe`（或通过 Steam 校验游戏文件还原主程序）。
+- 把 `RefRain.exe.bak` 改名回 `RefRain.exe`（或通过 Steam 校验游戏文件还原主程序）；
+- 若安装过 config 补丁：把 `config.exe.bak` 改名回 `config.exe`。
 
 ### 常见问题
 
 - **游戏内乱码 / 方块字**：确认系统区域设置为简体中文。
 - **bat 提示版本不符**：本补丁仅支持 V1.03.7 版主程序。
 - **Steam 校验文件后汉化失效**：校验会还原主程序，重新运行一次 `安装exe补丁.bat` 即可。
+- **config 补丁提示"未找到 Python"**：安装 Python 3 后重试，或跳过此步（不影响游戏本体）。
 
 ## 工作原理
 
@@ -44,7 +48,13 @@
 - `smokebuild.py` / `finalbuild.py` —— 生成 `localization.rsr` 并打包 `patch_0001.rp1`；
 - `packrp1.py` / `raf1.py` —— rp1 包打包器与格式解析/模拟器；
 - `gditest.py` —— 用 GDI 预验证字体渲染；
-- `bisecttest.py` —— 二分排查崩溃行的自动化工具。
+- `bisecttest.py` —— 二分排查崩溃行的自动化工具；
+- `reslib.py` —— .NET `.resources` v2 二进制格式的解析器/重建器（逆向所得）；
+- `patch_config.py` / `cn_config_patch.py` —— config.exe 汉化的开发版 / 发布版补丁器
+  （发布版即 zip 内的 `cn_config_patch.py`，原理：解析 config.exe 内嵌的 4 个
+  `.resources` 资源块，把 UI 字符串替换为中文后原位重打包，文件大小不变）；
+- `verify_config.ps1` —— 用 .NET 自带 ResourceReader 复验打补丁后的资源；
+- `ocr.ps1` / `ocr2.ps1` —— WinRT OCR 辅助脚本（开发时用于验证游戏画面）。
 
 在游戏根目录下运行 `python tools/finalbuild.py` 即可重新构建 `Patch\patch_0001.rp1`（脚本内含各文件的路径约定）。
 
